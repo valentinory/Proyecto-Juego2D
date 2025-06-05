@@ -61,7 +61,6 @@ contador_frames = 0
 ancho_obstaculo = 40
 alto_obstaculo = 40 
 velocidad_obstaculo = 10
-contador = 1
 
 def recarga_screen():
     global cuentaPasos, x
@@ -109,7 +108,8 @@ def recarga_screen():
 
     py.display.update()
 
-
+contador = 1
+puntaje = 0
 running = True
 while running:
     reloj.tick(FPS)
@@ -167,10 +167,15 @@ while running:
             if vidas <= 0:
                 print("GAME OVER")
                 running = False
+        else:
+            puntaje += 100
 
     recarga_screen()
     
     contador += 0.2
-    
+     
     if contador > 100 and contador < 150:
-        frecuencia_obstaculo = 25
+        frecuencia_obstaculo = 30
+    elif contador > 150 and contador < 300:
+        frecuencia_obstaculo = 20
+    
