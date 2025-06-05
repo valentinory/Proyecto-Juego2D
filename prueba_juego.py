@@ -3,7 +3,6 @@ import sys
 
 py.init()
 
-
 # Tamaño de la pantalla
 w, h = 1000, 600
 screen = py.display.set_mode((w, h))
@@ -48,10 +47,7 @@ fuerza_salto = 0.3
 
 # Vidas
 vidas = 3
-icono_vida = py.image.load("img/d04bd8b33083cb4.png")  # imagen de la vida
 icono_vida = py.transform.scale(py.image.load("img/d04bd8b33083cb4.png"), (64, 64))
-
-icono_vida_muerta = py.image.load("img/corazon_negro.png")  # imagen de la vida cuando mueres
 icono_vida_muerta = py.transform.scale(py.image.load("img/corazon_negro.png"), (64, 64))
 
 # Obstáculos
@@ -61,6 +57,14 @@ contador_frames = 0
 ancho_obstaculo = 40
 alto_obstaculo = 40 
 velocidad_obstaculo = 10
+
+# Fuente para texto
+fuente = py.font.SysFont(None, 30)
+color_texto = (255, 255, 255)
+
+# Puntaje
+contador = 1
+puntaje = 0
 
 def recarga_screen():
     global cuentaPasos, x
@@ -106,10 +110,16 @@ def recarga_screen():
         else:
             screen.blit(icono_vida_muerta, (10 + i * 40, 10))
 
+    # Mostrar puntaje
+    texto_puntaje = fuente.render(f"Puntaje: {puntaje}", True, color_texto)
+    screen.blit(texto_puntaje, (w - texto_puntaje.get_width() - 10, 10))
+
+    # Mostrar FPS
+    texto_fps = fuente.render(f"FPS: {int(reloj.get_fps())}", True, color_texto)
+    screen.blit(texto_fps, (w - texto_fps.get_width() - 10, 40))
+
     py.display.update()
 
-contador = 1
-puntaje = 0
 running = True
 while running:
     reloj.tick(FPS)
@@ -157,25 +167,16 @@ while running:
 
         if obs.x + obs.width < 0:
             obstaculos.remove(obs)
+            puntaje += 100
             
     # Colisiones
-    rect_personaje = py.Rect(px + 25, poy + 25, ancho_obstaculo, alto_obstaculo)  # Ajustás desplazamiento y tamaño real
+    rect_personaje = py.Rect(px + 25, poy + 25, ancho_obstaculo, alto_obstaculo)
     for obs in obstaculos[:]:
         if rect_personaje.colliderect(obs):
             vidas -= 1
             obstaculos.remove(obs)
             if vidas <= 0:
                 print("GAME OVER")
-                running = False
-        else:
-            puntaje += 100
+                running = False 
 
     recarga_screen()
-    
-    contador += 0.2
-     
-    if contador > 100 and contador < 150:
-        frecuencia_obstaculo = 30
-    elif contador > 150 and contador < 300:
-        frecuencia_obstaculo = 20
-    
